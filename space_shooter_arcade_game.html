@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Galaxy Shooter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            background-color: #050510;
+        }
+        .arcade-font {
+            font-family: 'Press Start 2P', monospace;
+        }
+        .neon-glow-cyan {
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.8), 0 0 20px rgba(6, 182, 212, 0.5);
+        }
+        .neon-glow-pink {
+            text-shadow: 0 0 10px rgba(236, 72, 153, 0.8), 0 0 20px rgba(236, 72, 153, 0.5);
+        }
+        .neon-box {
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.4), inset 0 0 15px rgba(6, 182, 212, 0.2);
+            border: 2px solid rgba(6, 182, 212, 0.8);
+        }
+        canvas {
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col items-center justify-center p-2 sm:p-4 text-white">
+
+    <!-- Container Utama Game -->
+    <div class="relative w-full max-w-4xl h-full max-h-[850px] flex flex-col items-center justify-between rounded-xl bg-gray-950/80 border border-cyan-500/30 shadow-2xl p-3 sm:p-5 overflow-hidden backdrop-blur-md">
+        
+        <!-- Header Info Game (Score, Wave, Lives) -->
+        <div class="w-full flex justify-between items-center z-10 px-2 sm:px-4 py-2 bg-slate-900/80 rounded-lg border border-cyan-500/20">
+            <div class="flex items-center space-x-4">
+                <div>
+                    <span class="text-xs text-cyan-400 block font-semibold">SKOR</span>
+                    <span id="score-val" class="arcade-font text-base sm:text-xl text-yellow-400">0</span>
+                </div>
+                <div>
+                    <span class="text-xs text-purple-400 block font-semibold">WAVE</span>
+                    <span id="wave-val" class="arcade-font text-base sm:text-xl text-purple-300">1</span>
+                </div>
+            </div>
+
+            <div class="text-center hidden sm:block">
+                <h1 class="text-lg font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500 neon-glow-cyan">
+                    NEON SHOOTER
+                </h1>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <span class="text-xs text-pink-400 block font-semibold mr-1">NYAWA</span>
+                <div id="lives-container" class="flex space-x-1">
+                    <!-- Heart icons updated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Canvas Tempat Permaianan -->
+        <div class="relative w-full flex-1 my-2 flex items-center justify-center overflow-hidden rounded-lg bg-black/60 border border-slate-800">
+            <canvas id="gameCanvas" class="w-full h-full object-contain"></canvas>
+
+            <!-- Overlay Menu Mulai -->
+            <div id="start-overlay" class="absolute inset-0 bg-black/85 flex flex-col items-center justify-center p-6 text-center z-20">
+                <h1 class="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 mb-4 arcade-font neon-glow-pink">
+                    NEON GALAXY
+                </h1>
+                <p class="text-gray-300 mb-6 text-sm sm:text-base max-w-md">
+                    Hancurkan musuh, kumpulkan power-up, dan bertahan seberapa lama kamu bisa!
+                </p>
+                <div class="text-xs text-cyan-300 mb-6 space-y-1 bg-slate-900/60 p-3 rounded-lg border border-cyan-500/30">
+                    <p>⌨️ <b class="text-yellow-400">Keyboard:</b> Panah Left/Right atau A/D untuk bergerak | Spacebar untuk Menembak</p>
+                    <p>📱 <b class="text-yellow-400">Touch/HP:</b> Gunakan Tombol Kontrol di Bawah</p>
+                </div>
+                <button id="start-btn" class="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-full text-lg shadow-lg transform hover:scale-105 transition-all duration-200 arcade-font neon-box">
+                    MULAI GAME
+                </button>
+            </div>
+
+            <!-- Overlay Game Over -->
+            <div id="gameover-overlay" class="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-6 text-center z-20 hidden">
+                <h2 class="text-3xl sm:text-5xl font-black text-red-500 mb-2 arcade-font neon-glow-pink animate-pulse">
+                    GAME OVER
+                </h2>
+                <p class="text-gray-400 text-sm mb-4">Pesawatmu telah hancur!</p>
+                
+                <div class="bg-slate-900/80 p-4 rounded-xl border border-pink-500/30 w-64 mb-6 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400 text-sm">Skor Akhir:</span>
+                        <span id="final-score" class="arcade-font text-yellow-400 text-lg">0</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400 text-sm">Wave Tercapai:</span>
+                        <span id="final-wave" class="arcade-font text-purple-300 text-lg">1</span>
+                    </div>
+                </div>
+
+                <button id="restart-btn" class="px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white font-bold rounded-full text-lg shadow-lg transform hover:scale-105 transition-all duration-200 arcade-font neon-box">
+                    MAIN LAGI
+                </button>
+            </div>
+        </div>
+
+        <!-- Touch Controls untuk HP / Tablet -->
+        <div class="w-full flex justify-between items-center px-2 py-1 sm:hidden z-10 gap-2">
+            <div class="flex space-x-2">
+                <button id="btn-left" class="w-14 h-14 bg-slate-800/80 active:bg-cyan-600 rounded-xl border border-cyan-500/50 flex items-center justify-center text-cyan-400 text-2xl font-bold active:scale-95 transition-all">
+                    ◄
+                </button>
+                <button id="btn-right" class="w-14 h-14 bg-slate-800/80 active:bg-cyan-600 rounded-xl border border-cyan-500/50 flex items-center justify-center text-cyan-400 text-2xl font-bold active:scale-95 transition-all">
+                    ►
+                </button>
+            </div>
+            <button id="btn-shoot" class="flex-1 h-14 bg-gradient-to-r from-pink-600 to-red-600 active:from-pink-500 active:to-red-500 rounded-xl border border-pink-400/50 flex items-center justify-center text-white font-bold text-lg active:scale-95 transition-all arcade-font shadow-lg">
+                TEMBAK 🚀
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Script Game Logic -->
+    <script>
+        // Setup Canvas & Game State
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const scoreValEl = document.getElementById('score-val');
+        const waveValEl = document.getElementById('wave-val');
+        const livesContainer = document.getElementById('lives-container');
+        const startOverlay = document.getElementById('start-overlay');
+        const gameoverOverlay = document.getElementById('gameover-overlay');
+        const finalScoreEl = document.getElementById('final-score');
+        const finalWaveEl = document.getElementById('final-wave');
+
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Touch Control Elements
+        const btnLeft = document.getElementById('btn-left');
+        const btnRight = document.getElementById('btn-right');
+        const btnShoot = document.getElementById('btn-shoot');
+
+        // Responsive Canvas Sizing
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Audio System Sederhana Menggunakan Web Audio API (Efek Suara Sintetis Tanpa Asset Luar)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'laser') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(800, now);
+                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                } else if (type === 'explosion') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(120, now);
+                    osc.frequency.exponentialRampToValueAtTime(20, now + 0.3);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'powerup') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.linearRampToValueAtTime(800, now + 0.2);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                }
+            } catch (e) {
+                console.log("Audio play error:", e);
+            }
+        }
+
+        // Variable Status Game
+        let isGameRunning = false;
+        let score = 0;
+        let lives = 3;
+        let wave = 1;
+        let frameCount = 0;
+
+        // Key Controls State
+        const keys = {
+            left: false,
+            right: false,
+            shoot: false
+        };
+
+        // Event Listener Keyboard
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
+            if (e.code === 'Space') {
+                keys.shoot = true;
+                e.preventDefault();
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
+            if (e.code === 'Space') keys.shoot = false;
+        });
+
+        // Event Listener Touch Buttons
+        const bindTouch = (btn, key) => {
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; });
+            btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
+            btn.addEventListener('mousedown', () => { keys[key] = true; });
+            btn.addEventListener('mouseup', () => { keys[key] = false; });
+            btn.addEventListener('mouseleave', () => { keys[key] = false; });
+        };
+        bindTouch(btnLeft, 'left');
+        bindTouch(btnRight, 'right');
+        bindTouch(btnShoot, 'shoot');
+
+        // Stars Background Effect
+        const stars = [];
+        for (let i = 0; i < 70; i++) {
+            stars.push({
+                x: Math.random(),
+                y: Math.random(),
+                size: Math.random() * 2 + 0.5,
+                speed: Math.random() * 1.5 + 0.5,
+                alpha: Math.random()
+            });
+        }
+
+        function updateStars() {
+            stars.forEach(s => {
+                s.y += s.speed / canvas.height;
+                if (s.y > 1) {
+                    s.y = 0;
+                    s.x = Math.random();
+                }
+            });
+        }
+
+        function drawStars() {
+            ctx.fillStyle = '#ffffff';
+            stars.forEach(s => {
+                ctx.globalAlpha = s.alpha;
+                ctx.fillRect(s.x * canvas.width, s.y * canvas.height, s.size, s.size);
+            });
+            ctx.globalAlpha = 1;
+        }
+
+        // Classes Objek Game
+        class Player {
+            constructor() {
+                this.width = 44;
+                this.height = 44;
+                this.x = canvas.width / 2 - this.width / 2;
+                this.y = canvas.height - this.height - 20;
+                this.speed = 7;
+                this.lastShot = 0;
+                this.shootDelay = 180; // ms
+                this.tripleShotTimer = 0;
+                this.shieldTimer = 0;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
+
+                // Shield Effect
+                if (this.shieldTimer > 0) {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.width / 2 + 8, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#00ffff';
+                    ctx.lineWidth = 3;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = '#00ffff';
+                    ctx.stroke();
+                }
+
+                // Player Ship (Neon Triangle Vector Style)
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = '#06b6d4';
+
+                // Main Body
+                ctx.beginPath();
+                ctx.moveTo(0, -this.height / 2);
+                ctx.lineTo(this.width / 2, this.height / 2);
+                ctx.lineTo(0, this.height / 4);
+                ctx.lineTo(-this.width / 2, this.height / 2);
+                ctx.closePath();
+                ctx.fillStyle = '#06b6d4';
+                ctx.fill();
+
+                // Core Light
+                ctx.beginPath();
+                ctx.arc(0, 0, 6, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+
+                // Engine Flame Animation
+                const flameHeight = 8 + Math.random() * 8;
+                ctx.beginPath();
+                ctx.moveTo(-8, this.height / 3);
+                ctx.lineTo(0, this.height / 3 + flameHeight);
+                ctx.lineTo(8, this.height / 3);
+                ctx.fillStyle = '#ec4899';
+                ctx.fill();
+
+                ctx.restore();
+            }
+
+            update() {
+                if (keys.left && this.x > 0) {
+                    this.x -= this.speed;
+                }
+                if (keys.right && this.x + this.width < canvas.width) {
+                    this.x += this.speed;
+                }
+
+                // Shooting Logic
+                const now = Date.now();
+                if (keys.shoot && now - this.lastShot > this.shootDelay) {
+                    this.shoot();
+                    this.lastShot = now;
+                }
+
+                if (this.tripleShotTimer > 0) this.tripleShotTimer--;
+                if (this.shieldTimer > 0) this.shieldTimer--;
+            }
+
+            shoot() {
+                playSound('laser');
+                if (this.tripleShotTimer > 0) {
+                    // Triple Shoot
+                    bullets.push(new Bullet(this.x + this.width / 2, this.y, 0, -10));
+                    bullets.push(new Bullet(this.x + this.width / 2, this.y, -2.5, -9.5));
+                    bullets.push(new Bullet(this.x + this.width / 2, this.y, 2.5, -9.5));
+                } else {
+                    // Normal Shoot
+                    bullets.push(new Bullet(this.x + this.width / 2, this.y, 0, -10));
+                }
+            }
+        }
+
+        class Bullet {
+            constructor(x, y, vx, vy) {
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+                this.radius = 3.5;
+                this.markedForDeletion = false;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#38bdf8';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#38bdf8';
+                ctx.fill();
+                ctx.restore();
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.y < -10 || this.x < -10 || this.x > canvas.width + 10) {
+                    this.markedForDeletion = true;
+                }
+            }
+        }
+
+        class Enemy {
+            constructor(wave) {
+                this.radius = 16 + Math.random() * 8;
+                this.x = Math.random() * (canvas.width - this.radius * 2) + this.radius;
+                this.y = -this.radius * 2;
+                this.speedY = (Math.random() * 1.5 + 1) + (wave * 0.25);
+                this.speedX = Math.sin(Math.random() * Math.PI) * 1.5 * (Math.random() > 0.5 ? 1 : -1);
+                this.hp = Math.floor(1 + wave * 0.3);
+                this.color = ['#ec4899', '#a855f7', '#f43f5e'][Math.floor(Math.random() * 3)];
+                this.markedForDeletion = false;
+                this.angle = 0;
+                this.rotSpeed = (Math.random() - 0.5) * 0.05;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = this.color;
+
+                // Diamond Polygon Enemy Shape
+                ctx.beginPath();
+                ctx.moveTo(0, -this.radius);
+                ctx.lineTo(this.radius, 0);
+                ctx.lineTo(0, this.radius);
+                ctx.lineTo(-this.radius, 0);
+                ctx.closePath();
+
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                ctx.restore();
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.angle += this.rotSpeed;
+
+                // Bounce off side walls
+                if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) {
+                    this.speedX *= -1;
+                }
+
+                if (this.y - this.radius > canvas.height) {
+                    this.markedForDeletion = true;
+                    // Player loses a life if enemy gets past bottom
+                    takeDamage();
+                }
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.radius = Math.random() * 3 + 1;
+                this.vx = (Math.random() - 0.5) * 7;
+                this.vy = (Math.random() - 0.5) * 7;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.03 + 0.015;
+                this.markedForDeletion = false;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= this.decay;
+                if (this.alpha <= 0) {
+                    this.markedForDeletion = true;
+                }
+            }
+        }
+
+        class PowerUp {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.radius = 12;
+                this.type = Math.random() < 0.5 ? 'TRIPLE' : 'SHIELD'; // 50% Triple Shot, 50% Shield
+                this.speedY = 2;
+                this.markedForDeletion = false;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.shadowBlur = 12;
+
+                if (this.type === 'TRIPLE') {
+                    ctx.shadowColor = '#eab308';
+                    ctx.fillStyle = '#eab308';
+                } else {
+                    ctx.shadowColor = '#06b6d4';
+                    ctx.fillStyle = '#06b6d4';
+                }
+
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#000000';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.type === 'TRIPLE' ? '3X' : '🛡️', 0, 0);
+
+                ctx.restore();
+            }
+
+            update() {
+                this.y += this.speedY;
+                if (this.y - this.radius > canvas.height) {
+                    this.markedForDeletion = true;
+                }
+            }
+        }
+
+        // Global Game Arrays
+        let player;
+        let bullets = [];
+        let enemies = [];
+        let particles = [];
+        let powerUps = [];
+
+        function createExplosion(x, y, color, count = 15) {
+            playSound('explosion');
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function updateLivesUI() {
+            livesContainer.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                const heart = document.createElement('span');
+                heart.className = `text-lg ${i < lives ? 'text-pink-500 animate-pulse' : 'text-gray-700'}`;
+                heart.innerText = '♥';
+                livesContainer.appendChild(heart);
+            }
+        }
+
+        function takeDamage() {
+            if (player.shieldTimer > 0) return; // Immune with shield
+
+            lives--;
+            updateLivesUI();
+            createExplosion(player.x + player.width / 2, player.y + player.height / 2, '#06b6d4', 25);
+
+            if (lives <= 0) {
+                endGame();
+            }
+        }
+
+        function spawnEnemies() {
+            // Wave progress logic
+            wave = Math.floor(score / 150) + 1;
+            waveValEl.innerText = wave;
+
+            const spawnRate = Math.max(30, 90 - wave * 5); // Faster spawn in higher waves
+            if (frameCount % Math.floor(spawnRate) === 0) {
+                enemies.push(new Enemy(wave));
+            }
+        }
+
+        function checkCollisions() {
+            // 1. Bullets vs Enemies
+            bullets.forEach(bullet => {
+                enemies.forEach(enemy => {
+                    const dist = Math.hypot(bullet.x - enemy.x, bullet.y - enemy.y);
+                    if (dist < bullet.radius + enemy.radius) {
+                        bullet.markedForDeletion = true;
+                        enemy.hp--;
+
+                        if (enemy.hp <= 0) {
+                            enemy.markedForDeletion = true;
+                            createExplosion(enemy.x, enemy.y, enemy.color);
+                            score += 10;
+                            scoreValEl.innerText = score;
+
+                            // Chance to drop powerup (15%)
+                            if (Math.random() < 0.15) {
+                                powerUps.push(new PowerUp(enemy.x, enemy.y));
+                            }
+                        }
+                    }
+                });
+            });
+
+            // 2. Player vs Enemies
+            enemies.forEach(enemy => {
+                const playerCenterX = player.x + player.width / 2;
+                const playerCenterY = player.y + player.height / 2;
+                const dist = Math.hypot(playerCenterX - enemy.x, playerCenterY - enemy.y);
+
+                if (dist < enemy.radius + player.width / 2) {
+                    enemy.markedForDeletion = true;
+                    createExplosion(enemy.x, enemy.y, enemy.color);
+                    takeDamage();
+                }
+            });
+
+            // 3. Player vs PowerUps
+            powerUps.forEach(pw => {
+                const playerCenterX = player.x + player.width / 2;
+                const playerCenterY = player.y + player.height / 2;
+                const dist = Math.hypot(playerCenterX - pw.x, playerCenterY - pw.y);
+
+                if (dist < pw.radius + player.width / 2) {
+                    pw.markedForDeletion = true;
+                    playSound('powerup');
+                    if (pw.type === 'TRIPLE') {
+                        player.tripleShotTimer = 400; // ~6.5 detik triple shot
+                    } else if (pw.type === 'SHIELD') {
+                        player.shieldTimer = 350; // ~5.5 detik shield
+                    }
+                }
+            });
+        }
+
+        // Main Loop Game
+        let animationFrameId;
+
+        function gameLoop() {
+            if (!isGameRunning) return;
+
+            frameCount++;
+
+            // Clear Screen with Fade Effect for Motion Trail
+            ctx.fillStyle = 'rgba(5, 5, 16, 0.35)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Background Stars
+            updateStars();
+            drawStars();
+
+            // Spawn & Update Objek
+            spawnEnemies();
+
+            player.update();
+            player.draw();
+
+            // Update & Draw Bullets
+            bullets.forEach(b => { b.update(); b.draw(); });
+            bullets = bullets.filter(b => !b.markedForDeletion);
+
+            // Update & Draw Enemies
+            enemies.forEach(e => { e.update(); e.draw(); });
+            enemies = enemies.filter(e => !e.markedForDeletion);
+
+            // Update & Draw Particles
+            particles.forEach(p => { p.update(); p.draw(); });
+            particles = particles.filter(p => !p.markedForDeletion);
+
+            // Update & Draw PowerUps
+            powerUps.forEach(pw => { pw.update(); pw.draw(); });
+            powerUps = powerUps.filter(pw => !pw.markedForDeletion);
+
+            checkCollisions();
+
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        function startGame() {
+            initAudio();
+            score = 0;
+            lives = 3;
+            wave = 1;
+            frameCount = 0;
+            bullets = [];
+            enemies = [];
+            particles = [];
+            powerUps = [];
+
+            scoreValEl.innerText = score;
+            waveValEl.innerText = wave;
+            updateLivesUI();
+
+            player = new Player();
+
+            startOverlay.classList.add('hidden');
+            gameoverOverlay.classList.add('hidden');
+            isGameRunning = true;
+
+            cancelAnimationFrame(animationFrameId);
+            gameLoop();
+        }
+
+        function endGame() {
+            isGameRunning = false;
+            finalScoreEl.innerText = score;
+            finalWaveEl.innerText = wave;
+            gameoverOverlay.classList.remove('hidden');
+        }
+
+        // Event Listener Tombol UI
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', startGame);
+
+        // Initial Background Draw
+        ctx.fillStyle = '#050510';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        drawStars();
+    </script>
+</body>
+</html>

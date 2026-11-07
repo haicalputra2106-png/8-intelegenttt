@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Island Survival Adventure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            background-color: #0d1117;
+        }
+        .pixel-font {
+            font-family: 'VT323', monospace;
+        }
+        canvas {
+            image-rendering: pixelated;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #374151;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col items-center justify-center p-2 text-white">
+
+    <!-- Game Container Utama -->
+    <div class="relative w-full max-w-5xl h-full max-h-[850px] flex flex-col items-center justify-between rounded-xl bg-slate-900 border border-slate-700 shadow-2xl p-2 sm:p-4 overflow-hidden">
+        
+        <!-- Top Status Bar -->
+        <div class="w-full flex justify-between items-center z-10 px-3 py-2 bg-slate-950/90 rounded-lg border border-slate-800 text-xs sm:text-sm">
+            <!-- Bars (HP, Hunger, Energy) -->
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- HP -->
+                <div class="flex items-center gap-1.5">
+                    <span class="text-red-500 font-bold">HP</span>
+                    <div class="w-20 sm:w-28 bg-slate-800 h-3 rounded-full overflow-hidden border border-slate-700">
+                        <div id="hp-bar" class="bg-red-500 h-full w-full transition-all duration-200"></div>
+                    </div>
+                </div>
+                <!-- Hunger -->
+                <div class="flex items-center gap-1.5">
+                    <span class="text-amber-500 font-bold">LAPAR</span>
+                    <div class="w-20 sm:w-28 bg-slate-800 h-3 rounded-full overflow-hidden border border-slate-700">
+                        <div id="hunger-bar" class="bg-amber-500 h-full w-full transition-all duration-200"></div>
+                    </div>
+                </div>
+                <!-- Energy -->
+                <div class="flex items-center gap-1.5">
+                    <span class="text-cyan-400 font-bold">STAMINA</span>
+                    <div class="w-20 sm:w-28 bg-slate-800 h-3 rounded-full overflow-hidden border border-slate-700">
+                        <div id="energy-bar" class="bg-cyan-400 h-full w-full transition-all duration-200"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Siklus Waktu / Hari -->
+            <div class="flex items-center gap-3 font-mono">
+                <div id="time-badge" class="px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40">
+                    ☀️ SIANG
+                </div>
+                <div class="text-slate-400">HARI <span id="day-val" class="text-white font-bold">1</span></div>
+            </div>
+        </div>
+
+        <!-- Canvas Main Viewport -->
+        <div class="relative w-full flex-1 my-2 flex items-center justify-center overflow-hidden rounded-lg border border-slate-800 bg-emerald-950">
+            <canvas id="gameCanvas" class="w-full h-full object-contain"></canvas>
+
+            <!-- Crafting Panel Overlay (Modal) -->
+            <div id="crafting-modal" class="absolute inset-0 bg-black/80 backdrop-blur-sm z-30 hidden flex items-center justify-center p-4">
+                <div class="bg-slate-900 border border-amber-500/40 rounded-xl p-4 w-full max-w-md max-h-[85%] flex flex-col">
+                    <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+                        <h3 class="text-lg font-bold text-amber-400 pixel-font tracking-wide">⚒️ CRAFTING & UPGRADE</h3>
+                        <button id="close-craft-btn" class="text-slate-400 hover:text-white px-2 py-1 text-xl font-bold">✕</button>
+                    </div>
+
+                    <div id="craft-recipe-list" class="flex-1 overflow-y-auto space-y-2.5 pr-1 custom-scrollbar">
+                        <!-- Recipes dynamically injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Start Overlay -->
+            <div id="start-overlay" class="absolute inset-0 bg-slate-950/95 z-40 flex flex-col items-center justify-center p-6 text-center">
+                <h1 class="text-4xl sm:text-6xl font-black text-amber-400 mb-2 pixel-font tracking-widest drop-shadow-md">
+                    ISLAND SURVIVAL 🏝️
+                </h1>
+                <p class="text-slate-300 max-w-md text-sm sm:text-base mb-6">
+                    Kumpulkan sumber daya, buat perkakas, bertahan dari rasa lapar & musuh malam hari!
+                </p>
+                <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 text-left text-xs sm:text-sm text-slate-300 space-y-1.5 mb-6 max-w-sm">
+                    <p>🏃 <b>Pergerakan:</b> WASD / Tombol Panah (atau DPAD HP)</p>
+                    <p>⛏️ <b>Aksi / Pukul:</b> Spasi / Tombol Tembak</p>
+                    <p>🎒 <b>Crafting:</b> Klik Tombol Crafting [C]</p>
+                    <p>🥩 <b>Makan:</b> Klik Makanan di Inventaris</p>
+                </div>
+                <button id="start-btn" class="px-8 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xl rounded-xl transition-all shadow-lg pixel-font tracking-wider">
+                    MULAI PETUALANGAN
+                </button>
+            </div>
+
+            <!-- Game Over Overlay -->
+            <div id="gameover-overlay" class="absolute inset-0 bg-black/90 z-40 flex flex-col items-center justify-center p-6 text-center hidden">
+                <h2 class="text-5xl font-extrabold text-red-500 mb-2 pixel-font">KAMU TEWAS</h2>
+                <p class="text-slate-400 text-sm mb-4">Pulau memakan korban lain...</p>
+                <p class="text-amber-400 text-lg mb-6">Bertahan Selama: <span id="final-days" class="font-bold text-white">0</span> Hari</p>
+                <button id="restart-btn" class="px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-lg transition-all pixel-font">
+                    COBA LAGI
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom Inventory & Mobile Controls -->
+        <div class="w-full flex flex-col gap-2 z-10">
+            <!-- Inventory Slot Bar -->
+            <div class="w-full bg-slate-950/90 p-2 rounded-lg border border-slate-800 flex items-center justify-between gap-2 overflow-x-auto">
+                <div class="flex items-center gap-2">
+                    <div title="Kayu" class="flex items-center gap-1.5 bg-slate-900 px-2.5 py-1.5 rounded border border-amber-900/50">
+                        <span>🪵</span> <span id="inv-wood" class="font-bold text-amber-200 text-sm">0</span>
+                    </div>
+                    <div title="Batu" class="flex items-center gap-1.5 bg-slate-900 px-2.5 py-1.5 rounded border border-slate-700">
+                        <span>🪨</span> <span id="inv-stone" class="font-bold text-slate-300 text-sm">0</span>
+                    </div>
+                    <div title="Buah" onclick="eatFood()" class="cursor-pointer flex items-center gap-1.5 bg-slate-900 px-2.5 py-1.5 rounded border border-red-900/50 hover:bg-slate-800">
+                        <span>🍎</span> <span id="inv-food" class="font-bold text-red-400 text-sm">0</span>
+                        <span class="text-[10px] text-slate-400 underline ml-1">Makan</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <div id="equipped-tool-tag" class="text-xs px-2 py-1 bg-slate-800 rounded text-amber-300 font-mono">
+                        Tangan Kosong
+                    </div>
+                    <button id="open-craft-btn" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded text-xs sm:text-sm flex items-center gap-1 transition-all">
+                        <span>⚒️</span> Crafting
+                    </button>
+                </div>
+            </div>
+
+            <!-- Touch Gamepad Controls (Mobile Only) -->
+            <div class="w-full flex justify-between items-center sm:hidden px-1 py-1">
+                <div class="grid grid-cols-3 gap-1 w-36 h-36">
+                    <div></div>
+                    <button id="btn-up" class="bg-slate-800 active:bg-amber-600 rounded-lg flex items-center justify-center text-xl text-slate-200">▲</button>
+                    <div></div>
+                    <button id="btn-left" class="bg-slate-800 active:bg-amber-600 rounded-lg flex items-center justify-center text-xl text-slate-200">◄</button>
+                    <div class="bg-slate-900/50 rounded-lg"></div>
+                    <button id="btn-right" class="bg-slate-800 active:bg-amber-600 rounded-lg flex items-center justify-center text-xl text-slate-200">►</button>
+                    <div></div>
+                    <button id="btn-down" class="bg-slate-800 active:bg-amber-600 rounded-lg flex items-center justify-center text-xl text-slate-200">▼</button>
+                </div>
+
+                <div class="flex gap-2">
+                    <button id="btn-action" class="w-20 h-20 bg-amber-500 active:bg-amber-400 text-slate-950 font-black text-xl rounded-full shadow-lg border-2 border-amber-300 flex items-center justify-center">
+                        🪓
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Canvas & Audio Setup ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            const parent = canvas.parentElement;
+            canvas.width = parent.clientWidth;
+            canvas.height = parent.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Audio System Sintetis
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioCtx();
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                const now = audioCtx.currentTime;
+
+                if (type === 'hit') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.1);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now); osc.stop(now + 0.1);
+                } else if (type === 'craft') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.linearRampToValueAtTime(800, now + 0.15);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now); osc.stop(now + 0.2);
+                } else if (type === 'eat') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.linearRampToValueAtTime(500, now + 0.1);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    osc.start(now); osc.stop(now + 0.15);
+                } else if (type === 'hurt') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.linearRampToValueAtTime(80, now + 0.2);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now); osc.stop(now + 0.2);
+                }
+            } catch(e){}
+        }
+
+        // Game World Setup
+        const WORLD_WIDTH = 1800;
+        const WORLD_HEIGHT = 1400;
+
+        let isGameRunning = false;
+        let dayCount = 1;
+        let gameTime = 0; // 0 to 2400 (day-night cycle)
+        let isNight = false;
+
+        // Player Stats & State
+        const player = {
+            x: WORLD_WIDTH / 2,
+            y: WORLD_HEIGHT / 2,
+            size: 18,
+            speed: 3.2,
+            hp: 100,
+            maxHp: 100,
+            hunger: 100,
+            energy: 100,
+            inventory: { wood: 0, stone: 0, food: 5 },
+            tool: 'none', // 'none', 'wooden_axe', 'stone_axe', 'sword'
+            hasTorch: false,
+            hasCampfire: false,
+            isAttacking: false,
+            attackAngle: 0
+        };
+
+        // Entities
+        let trees = [];
+        let rocks = [];
+        let bushes = [];
+        let monsters = [];
+        let campfires = [];
+        let particles = [];
+
+        // Camera
+        const camera = { x: 0, y: 0 };
+
+        // Key Input State
+        const keys = { up: false, down: false, left: false, right: false, action: false };
+
+        window.addEventListener('keydown', e => {
+            if (e.code === 'KeyW' || e.code === 'ArrowUp') keys.up = true;
+            if (e.code === 'KeyS' || e.code === 'ArrowDown') keys.down = true;
+            if (e.code === 'KeyA' || e.code === 'ArrowLeft') keys.left = true;
+            if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = true;
+            if (e.code === 'Space') { keys.action = true; e.preventDefault(); }
+            if (e.code === 'KeyC') toggleCraftingModal();
+        });
+
+        window.addEventListener('keyup', e => {
+            if (e.code === 'KeyW' || e.code === 'ArrowUp') keys.up = false;
+            if (e.code === 'KeyS' || e.code === 'ArrowDown') keys.down = false;
+            if (e.code === 'KeyA' || e.code === 'ArrowLeft') keys.left = false;
+            if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = false;
+            if (e.code === 'Space') keys.action = false;
+        });
+
+        // Touch Control Binding
+        function bindBtn(id, key) {
+            const btn = document.getElementById(id);
+            if (!btn) return;
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; });
+            btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
+            btn.addEventListener('mousedown', () => { keys[key] = true; });
+            btn.addEventListener('mouseup', () => { keys[key] = false; });
+        }
+        bindBtn('btn-up', 'up');
+        bindBtn('btn-down', 'down');
+        bindBtn('btn-left', 'left');
+        bindBtn('btn-right', 'right');
+        bindBtn('btn-action', 'action');
+
+        // --- Crafting Recipes & System ---
+        const recipes = [
+            {
+                id: 'wooden_axe',
+                name: 'Kapak Kayu',
+                icon: '🪓',
+                cost: { wood: 8, stone: 0 },
+                desc: 'Mempercepat menebang pohon.',
+                action: () => { player.tool = 'wooden_axe'; updateEquippedUI(); }
+            },
+            {
+                id: 'stone_axe',
+                name: 'Kapak Batu Super',
+                icon: '⛏️',
+                cost: { wood: 15, stone: 10 },
+                desc: 'Menebang & menambang batu sangat cepat.',
+                action: () => { player.tool = 'stone_axe'; updateEquippedUI(); }
+            },
+            {
+                id: 'sword',
+                name: 'Pedang Kayu',
+                icon: '🗡️',
+                cost: { wood: 12, stone: 5 },
+                desc: 'Senjata serang monster malam hari.',
+                action: () => { player.tool = 'sword'; updateEquippedUI(); }
+            },
+            {
+                id: 'torch',
+                name: 'Obor Genggam',
+                icon: '🔦',
+                cost: { wood: 10, stone: 2 },
+                desc: 'Memberikan penerangan di malam hari.',
+                action: () => { player.hasTorch = true; }
+            },
+            {
+                id: 'campfire',
+                name: 'Api Unggun (Camp)',
+                icon: '🔥',
+                cost: { wood: 20, stone: 15 },
+                desc: 'Membangun tempat perlindungan terang & aman.',
+                action: () => { 
+                    campfires.push({ x: player.x, y: player.y + 20, radius: 180 });
+                }
+            }
+        ];
+
+        function renderCraftingRecipes() {
+            const container = document.getElementById('craft-recipe-list');
+            container.innerHTML = '';
+
+            recipes.forEach(r => {
+                const canCraft = (player.inventory.wood >= r.cost.wood) && (player.inventory.stone >= r.cost.stone);
+                const isOwned = (r.id === player.tool || (r.id === 'torch' && player.hasTorch));
+
+                const div = document.createElement('div');
+                div.className = `p-3 rounded-lg border flex items-center justify-between gap-3 ${canCraft ? 'bg-slate-800 border-slate-700' : 'bg-slate-900/60 border-slate-800 opacity-60'}`;
+                
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">${r.icon}</span>
+                        <div>
+                            <h4 class="font-bold text-sm text-white">${r.name}</h4>
+                            <p class="text-xs text-slate-400">${r.desc}</p>
+                            <div class="text-[11px] text-amber-300 font-mono mt-1">
+                                Biaya: ${r.cost.wood ? `🪵 ${r.cost.wood} ` : ''} ${r.cost.stone ? `🪨 ${r.cost.stone}` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <button class="px-3 py-1.5 rounded text-xs font-bold ${isOwned ? 'bg-emerald-900 text-emerald-300' : canCraft ? 'bg-amber-500 hover:bg-amber-400 text-slate-950' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}"
+                        ${!canCraft || isOwned ? 'disabled' : ''} onclick="craftItem('${r.id}')">
+                        ${isOwned ? 'DIMILIKI' : 'BUAT'}
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function craftItem(id) {
+            const r = recipes.find(item => item.id === id);
+            if (!r) return;
+
+            if (player.inventory.wood >= r.cost.wood && player.inventory.stone >= r.cost.stone) {
+                player.inventory.wood -= r.cost.wood;
+                player.inventory.stone -= r.cost.stone;
+                r.action();
+                playSound('craft');
+                updateInventoryUI();
+                renderCraftingRecipes();
+            }
+        }
+
+        function updateEquippedUI() {
+            const tag = document.getElementById('equipped-tool-tag');
+            if (player.tool === 'wooden_axe') tag.innerText = '🪓 Kapak Kayu';
+            else if (player.tool === 'stone_axe') tag.innerText = '⛏️ Kapak Batu';
+            else if (player.tool === 'sword') tag.innerText = '🗡️ Pedang Kayu';
+            else tag.innerText = 'Tangan Kosong';
+        }
+
+        const modal = document.getElementById('crafting-modal');
+        function toggleCraftingModal() {
+            if (modal.classList.contains('hidden')) {
+                renderCraftingRecipes();
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+        document.getElementById('open-craft-btn').addEventListener('click', toggleCraftingModal);
+        document.getElementById('close-craft-btn').addEventListener('click', toggleCraftingModal);
+
+        function eatFood() {
+            if (player.inventory.food > 0 && player.hunger < 100) {
+                player.inventory.food--;
+                player.hunger = Math.min(100, player.hunger + 30);
+                player.hp = Math.min(100, player.hp + 15);
+                playSound('eat');
+                updateInventoryUI();
+                updateStatsUI();
+            }
+        }
+
+        // World Generator
+        function initWorld() {
+            trees = []; rocks = []; bushes = []; monsters = []; campfires = [];
+            
+            // Trees
+            for (let i = 0; i < 65; i++) {
+                trees.push({
+                    x: Math.random() * (WORLD_WIDTH - 100) + 50,
+                    y: Math.random() * (WORLD_HEIGHT - 100) + 50,
+                    hp: 3
+                });
+            }
+
+            // Rocks
+            for (let i = 0; i < 40; i++) {
+                rocks.push({
+                    x: Math.random() * (WORLD_WIDTH - 100) + 50,
+                    y: Math.random() * (WORLD_HEIGHT - 100) + 50,
+                    hp: 4
+                });
+            }
+
+            // Berry Bushes
+            for (let i = 0; i < 30; i++) {
+                bushes.push({
+                    x: Math.random() * (WORLD_WIDTH - 100) + 50,
+                    y: Math.random() * (WORLD_HEIGHT - 100) + 50,
+                    hasFruit: true
+                });
+            }
+        }
+
+        function spawnMonsters() {
+            if (isNight && monsters.length < 5 + dayCount * 2) {
+                if (Math.random() < 0.03) {
+                    // Spawn at border edge
+                    const side = Math.floor(Math.random() * 4);
+                    let mx = 0, my = 0;
+                    if (side === 0) { mx = Math.random() * WORLD_WIDTH; my = 10; }
+                    else if (side === 1) { mx = WORLD_WIDTH - 10; my = Math.random() * WORLD_HEIGHT; }
+                    else if (side === 2) { mx = Math.random() * WORLD_WIDTH; my = WORLD_HEIGHT - 10; }
+                    else { mx = 10; my = Math.random() * WORLD_HEIGHT; }
+
+                    monsters.push({
+                        x: mx, y: my,
+                        size: 16,
+                        hp: 20 + dayCount * 5,
+                        speed: 1.8 + Math.random() * 0.5,
+                        damage: 10
+                    });
+                }
+            }
+        }
+
+        // Update UI Status
+        function updateStatsUI() {
+            document.getElementById('hp-bar').style.width = `${Math.max(0, player.hp)}%`;
+            document.getElementById('hunger-bar').style.width = `${Math.max(0, player.hunger)}%`;
+            document.getElementById('energy-bar').style.width = `${Math.max(0, player.energy)}%`;
+        }
+
+        function updateInventoryUI() {
+            document.getElementById('inv-wood').innerText = player.inventory.wood;
+            document.getElementById('inv-stone').innerText = player.inventory.stone;
+            document.getElementById('inv-food').innerText = player.inventory.food;
+        }
+
+        // Attack & Harvesting System
+        let lastAttackTime = 0;
+        function performAction() {
+            const now = Date.now();
+            if (now - lastAttackTime < 300) return; // Cooldown 300ms
+            lastAttackTime = now;
+
+            player.isAttacking = true;
+            setTimeout(() => player.isAttacking = false, 150);
+
+            // Power Multiplier
+            let dmg = 1;
+            if (player.tool === 'wooden_axe') dmg = 2;
+            else if (player.tool === 'stone_axe') dmg = 4;
+            else if (player.tool === 'sword') dmg = 5;
+
+            // Hit Trees
+            trees.forEach(t => {
+                const dist = Math.hypot(player.x - t.x, player.y - t.y);
+                if (dist < player.size + 25) {
+                    t.hp -= dmg;
+                    playSound('hit');
+                    spawnParticles(t.x, t.y, '#78350f', 5);
+                    if (t.hp <= 0) {
+                        player.inventory.wood += Math.floor(Math.random() * 3) + 2;
+                        t.x = -9999; // mark removal
+                    }
+                }
+            });
+            trees = trees.filter(t => t.x > 0);
+
+            // Hit Rocks
+            rocks.forEach(r => {
+                const dist = Math.hypot(player.x - r.x, player.y - r.y);
+                if (dist < player.size + 25) {
+                    r.hp -= dmg;
+                    playSound('hit');
+                    spawnParticles(r.x, r.y, '#64748b', 5);
+                    if (r.hp <= 0) {
+                        player.inventory.stone += Math.floor(Math.random() * 3) + 2;
+                        r.x = -9999;
+                    }
+                }
+            });
+            rocks = rocks.filter(r => r.x > 0);
+
+            // Harvest Bushes
+            bushes.forEach(b => {
+                const dist = Math.hypot(player.x - b.x, player.y - b.y);
+                if (dist < player.size + 20 && b.hasFruit) {
+                    b.hasFruit = false;
+                    player.inventory.food += 2;
+                    playSound('eat');
+                    spawnParticles(b.x, b.y, '#ef4444', 4);
+                }
+            });
+
+            // Hit Monsters
+            monsters.forEach(m => {
+                const dist = Math.hypot(player.x - m.x, player.y - m.y);
+                if (dist < player.size + 30) {
+                    const swordBonus = player.tool === 'sword' ? 15 : 5;
+                    m.hp -= (dmg * 4 + swordBonus);
+                    playSound('hit');
+                    spawnParticles(m.x, m.y, '#a855f7', 8);
+
+                    // Knockback monster
+                    const angle = Math.atan2(m.y - player.y, m.x - player.x);
+                    m.x += Math.cos(angle) * 20;
+                    m.y += Math.sin(angle) * 20;
+
+                    if (m.hp <= 0) {
+                        player.inventory.food += 1;
+                        m.x = -9999;
+                    }
+                }
+            });
+            monsters = monsters.filter(m => m.x > 0);
+
+            updateInventoryUI();
+        }
+
+        function spawnParticles(x, y, color, count = 5) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x, y,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: (Math.random() - 0.5) * 4,
+                    radius: Math.random() * 3 + 1,
+                    alpha: 1,
+                    color
+                });
+            }
+        }
+
+        // Main Update Loop Logic
+        function update() {
+            if (!isGameRunning) return;
+
+            // Time & Day Cycle
+            gameTime = (gameTime + 1) % 2400; // ~40 detik per siklus
+            if (gameTime === 0) {
+                dayCount++;
+                document.getElementById('day-val').innerText = dayCount;
+            }
+
+            isNight = gameTime > 1300 && gameTime < 2300;
+            const timeBadge = document.getElementById('time-badge');
+            if (isNight) {
+                timeBadge.className = "px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-950 text-indigo-400 border border-indigo-500/40";
+                timeBadge.innerText = "🌙 MALAM";
+            } else {
+                timeBadge.className = "px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40";
+                timeBadge.innerText = "☀️ SIANG";
+            }
+
+            // Decrement Hunger & Health Regeneration Logic
+            if (gameTime % 60 === 0) {
+                player.hunger = Math.max(0, player.hunger - 0.4);
+                if (player.hunger <= 0) {
+                    player.hp = Math.max(0, player.hp - 1); // kelaparan
+                    playSound('hurt');
+                } else if (player.hunger > 70 && player.hp < player.maxHp) {
+                    player.hp = Math.min(player.maxHp, player.hp + 0.5); // healing alami
+                }
+                updateStatsUI();
+            }
+
+            if (player.hp <= 0) {
+                endGame();
+                return;
+            }
+
+            // Player Movement
+            let moveX = 0, moveY = 0;
+            if (keys.up) moveY -= 1;
+            if (keys.down) moveY += 1;
+            if (keys.left) moveX -= 1;
+            if (keys.right) moveX += 1;
+
+            if (moveX !== 0 && moveY !== 0) {
+                moveX *= 0.7071;
+                moveY *= 0.7071;
+            }
+
+            player.x += moveX * player.speed;
+            player.y += moveY * player.speed;
+
+            // Keep player inside island boundaries
+            player.x = Math.max(40, Math.min(WORLD_WIDTH - 40, player.x));
+            player.y = Math.max(40, Math.min(WORLD_HEIGHT - 40, player.y));
+
+            if (keys.action) performAction();
+
+            // Spawn & Update Monsters
+            spawnMonsters();
+            monsters.forEach(m => {
+                // Check if monster is inside safe campfire zone
+                let inSafeZone = false;
+                campfires.forEach(c => {
+                    if (Math.hypot(m.x - c.x, m.y - c.y) < c.radius) inSafeZone = true;
+                });
+
+                if (inSafeZone) {
+                    // Monster flees campfire
+                    const angle = Math.atan2(m.y - player.y, m.x - player.x);
+                    m.x += Math.cos(angle) * m.speed;
+                    m.y += Math.sin(angle) * m.speed;
+                } else {
+                    // Chase Player
+                    const angle = Math.atan2(player.y - m.y, player.x - m.x);
+                    m.x += Math.cos(angle) * m.speed;
+                    m.y += Math.sin(angle) * m.speed;
+                }
+
+                // Attack Player
+                const distToPlayer = Math.hypot(player.x - m.x, player.y - m.y);
+                if (distToPlayer < player.size + m.size) {
+                    player.hp -= 0.3;
+                    playSound('hurt');
+                    updateStatsUI();
+                }
+            });
+
+            // Particles Update
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= 0.03;
+            });
+            particles = particles.filter(p => p.alpha > 0);
+
+            // Camera follow Player
+            camera.x = player.x - canvas.width / 2;
+            camera.y = player.y - canvas.height / 2;
+            camera.x = Math.max(0, Math.min(WORLD_WIDTH - canvas.width, camera.x));
+            camera.y = Math.max(0, Math.min(WORLD_HEIGHT - canvas.height, camera.y));
+        }
+
+        // --- Render Graphics ---
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            ctx.translate(-camera.x, -camera.y);
+
+            // 1. Draw Grass World & Island Border
+            ctx.fillStyle = '#15803d'; // Island Grass
+            ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+
+            // Ocean Water outside
+            ctx.strokeStyle = '#0284c7';
+            ctx.lineWidth = 20;
+            ctx.strokeRect(10, 10, WORLD_WIDTH - 20, WORLD_HEIGHT - 20);
+
+            // 2. Draw Campfires
+            campfires.forEach(c => {
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, 14, 0, Math.PI * 2);
+                ctx.fillStyle = '#b45309';
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, 8, 0, Math.PI * 2);
+                ctx.fillStyle = '#f59e0b';
+                ctx.fill();
+            });
+
+            // 3. Draw Bushes
+            bushes.forEach(b => {
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, 12, 0, Math.PI * 2);
+                ctx.fillStyle = '#166534';
+                ctx.fill();
+
+                if (b.hasFruit) {
+                    ctx.beginPath();
+                    ctx.arc(b.x - 4, b.y - 3, 3.5, 0, Math.PI * 2);
+                    ctx.arc(b.x + 4, b.y + 2, 3.5, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fill();
+                }
+            });
+
+            // 4. Draw Rocks
+            rocks.forEach(r => {
+                ctx.beginPath();
+                ctx.arc(r.x, r.y, 14, 0, Math.PI * 2);
+                ctx.fillStyle = '#475569';
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(r.x - 3, r.y - 3, 10, 0, Math.PI * 2);
+                ctx.fillStyle = '#64748b';
+                ctx.fill();
+            });
+
+            // 5. Draw Trees
+            trees.forEach(t => {
+                // Trunk
+                ctx.fillStyle = '#78350f';
+                ctx.fillRect(t.x - 4, t.y, 8, 14);
+                // Canopy
+                ctx.beginPath();
+                ctx.arc(t.x, t.y - 6, 18, 0, Math.PI * 2);
+                ctx.fillStyle = '#14532d';
+                ctx.fill();
+            });
+
+            // 6. Draw Monsters
+            monsters.forEach(m => {
+                ctx.beginPath();
+                ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
+                ctx.fillStyle = '#581c87';
+                ctx.fill();
+                ctx.strokeStyle = '#c084fc';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Eyes
+                ctx.fillStyle = '#red';
+                ctx.fillRect(m.x - 5, m.y - 4, 3, 3);
+                ctx.fillRect(m.x + 2, m.y - 4, 3, 3);
+            });
+
+            // 7. Draw Player
+            ctx.save();
+            ctx.translate(player.x, player.y);
+
+            // Body
+            ctx.beginPath();
+            ctx.arc(0, 0, player.size, 0, Math.PI * 2);
+            ctx.fillStyle = '#f59e0b';
+            ctx.fill();
+            ctx.strokeStyle = '#78350f';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Head/Face
+            ctx.fillStyle = '#000';
+            ctx.fillRect(-4, -5, 3, 4);
+            ctx.fillRect(3, -5, 3, 4);
+
+            // Attack Animation (Tool Swing)
+            if (player.isAttacking) {
+                ctx.beginPath();
+                ctx.arc(0, 0, player.size + 14, -Math.PI / 4, Math.PI / 4);
+                ctx.strokeStyle = '#fde047';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+            }
+
+            ctx.restore();
+
+            // 8. Draw Particles
+            particles.forEach(p => {
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            // 9. Night Time Darkness & Torch Light Overlay
+            if (gameTime > 1200) {
+                let nightAlpha = 0;
+                if (gameTime > 1200 && gameTime <= 1500) nightAlpha = (gameTime - 1200) / 300 * 0.85; // Dusk
+                else if (gameTime > 1500 && gameTime < 2100) nightAlpha = 0.85; // Full night
+                else if (gameTime >= 2100) nightAlpha = (2400 - gameTime) / 300 * 0.85; // Dawn
+
+                // Ambient Dark Canvas Layer
+                const darkCanvas = document.createElement('canvas');
+                darkCanvas.width = canvas.width;
+                darkCanvas.height = canvas.height;
+                const dCtx = darkCanvas.getContext('2d');
+
+                dCtx.fillStyle = `rgba(3, 7, 18, ${nightAlpha})`;
+                dCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Cut out torch / campfire light circle from dark overlay
+                dCtx.globalCompositeOperation = 'destination-out';
+
+                // Player Torch Light
+                if (player.hasTorch) {
+                    const px = player.x - camera.x;
+                    const py = player.y - camera.y;
+                    const radGrd = dCtx.createRadialGradient(px, py, 10, px, py, 130);
+                    radGrd.addColorStop(0, 'rgba(0,0,0,1)');
+                    radGrd.addColorStop(1, 'rgba(0,0,0,0)');
+                    dCtx.fillStyle = radGrd;
+                    dCtx.beginPath(); dCtx.arc(px, py, 130, 0, Math.PI * 2); dCtx.fill();
+                }
+
+                // Campfire Lights
+                campfires.forEach(c => {
+                    const cx = c.x - camera.x;
+                    const cy = c.y - camera.y;
+                    const radGrd = dCtx.createRadialGradient(cx, cy, 20, cx, cy, c.radius);
+                    radGrd.addColorStop(0, 'rgba(0,0,0,1)');
+                    radGrd.addColorStop(1, 'rgba(0,0,0,0)');
+                    dCtx.fillStyle = radGrd;
+                    dCtx.beginPath(); dCtx.arc(cx, cy, c.radius, 0, Math.PI * 2); dCtx.fill();
+                });
+
+                ctx.restore(); // Restore World Coordinates before drawing overlay to screen
+                ctx.drawImage(darkCanvas, 0, 0);
+                ctx.save();
+                ctx.translate(-camera.x, -camera.y);
+            }
+
+            ctx.restore();
+        }
+
+        // Main Game Loop Animation Frame
+        function loop() {
+            update();
+            render();
+            if (isGameRunning) requestAnimationFrame(loop);
+        }
+
+        function startGame() {
+            initAudio();
+            player.x = WORLD_WIDTH / 2;
+            player.y = WORLD_HEIGHT / 2;
+            player.hp = 100;
+            player.hunger = 100;
+            player.energy = 100;
+            player.inventory = { wood: 0, stone: 0, food: 5 };
+            player.tool = 'none';
+            player.hasTorch = false;
+            dayCount = 1;
+            gameTime = 0;
+
+            initWorld();
+            updateStatsUI();
+            updateInventoryUI();
+            updateEquippedUI();
+
+            document.getElementById('start-overlay').classList.add('hidden');
+            document.getElementById('gameover-overlay').classList.add('hidden');
+
+            isGameRunning = true;
+            loop();
+        }
+
+        function endGame() {
+            isGameRunning = false;
+            document.getElementById('final-days').innerText = dayCount;
+            document.getElementById('gameover-overlay').classList.remove('hidden');
+        }
+
+        document.getElementById('start-btn').addEventListener('click', startGame);
+        document.getElementById('restart-btn').addEventListener('click', startGame);
+    </script>
+</body>
+</html>

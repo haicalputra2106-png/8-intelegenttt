@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class of 8 Intelligent (8I) - SMPN 33 Kota Bandung</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Rozha+One&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sunda: {
+                            gold: '#D4AF37',
+                            goldHover: '#B59226',
+                            goldLight: '#F3E5AB',
+                            woodDark: '#1C120B',
+                            woodMedium: '#362214',
+                            woodLight: '#593B22',
+                            emeraldDark: '#0F2C23',
+                            emerald: '#1B4D3E',
+                            cream: '#FAF6EE',
+                            creamCard: '#FFFDF9',
+                            terracotta: '#9E381A'
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Cinzel', 'serif'],
+                        sundaTitle: ['Rozha One', 'serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .bg-pattern {
+            background-color: #1C120B;
+            background-image: radial-gradient(#D4AF37 0.6px, transparent 0.6px), radial-gradient(#D4AF37 0.6px, #1C120B 0.6px);
+            background-size: 24px 24px;
+            background-position: 0 0, 12px 12px;
+            background-opacity: 0.08;
+        }
+
+        .gold-border-glow {
+            border: 2px solid #D4AF37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.18);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1C120B;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 4px;
+        }
+
+        /* Equalizer Animation */
+        @keyframes eqBar {
+            0%, 100% { height: 4px; }
+            50% { height: 18px; }
+        }
+        .eq-bar-1 { animation: eqBar 0.6s infinite ease-in-out; }
+        .eq-bar-2 { animation: eqBar 0.8s infinite ease-in-out 0.2s; }
+        .eq-bar-3 { animation: eqBar 0.5s infinite ease-in-out 0.4s; }
+    </style>
+</head>
+<body class="bg-sunda-cream font-body text-sunda-woodDark antialiased selection:bg-sunda-gold selection:text-sunda-woodDark custom-scrollbar">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 bg-sunda-woodDark/95 backdrop-blur-md border-b-2 border-sunda-gold text-sunda-cream shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- School & Class Logo Badge -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <div class="w-12 h-12 relative flex-shrink-0">
+                    <!-- SVG Logo 8I SMPN 33 Kota Bandung -->
+                    <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-md">
+                        <polygon points="50,4 92,25 92,75 50,96 8,75 8,25" fill="#1B4D3E" stroke="#D4AF37" stroke-width="4"/>
+                        <polygon points="50,10 85,28 85,72 50,90 15,72 15,28" fill="#362214" stroke="#D4AF37" stroke-width="1.5"/>
+                        <!-- Crown Top -->
+                        <path d="M 38 28 L 50 20 L 62 28 L 58 35 L 42 35 Z" fill="#D4AF37"/>
+                        <!-- Kujang Symbol -->
+                        <path d="M 48 36 C 44 42 42 48 46 54 C 48 57 52 58 54 54 C 56 50 52 46 50 44 L 52 40 Z" fill="#D4AF37"/>
+                        <!-- Text 33 & 8I -->
+                        <text x="50" y="70" font-family="'Cinzel', serif" font-weight="900" font-size="20" fill="#FAF6EE" text-anchor="middle">8I</text>
+                        <text x="50" y="82" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="9" fill="#D4AF37" text-anchor="middle">SMPN 33</text>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-heading text-lg font-bold tracking-wider text-sunda-gold leading-tight">CLASS OF 8 INTELLIGENT</h1>
+                    <p class="text-xs text-sunda-goldLight font-medium">SMPN 33 Kota Bandung • Kesenian Sunda</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center space-x-6 text-xs lg:text-sm font-semibold tracking-wider">
+                <a href="#beranda" class="hover:text-sunda-gold transition-colors">Beranda</a>
+                <a href="#folklore" class="hover:text-sunda-gold transition-colors">Cerita Rakyat</a>
+                <a href="#walikelas" class="hover:text-sunda-gold transition-colors">Wali Kelas</a>
+                <a href="#pengurus" class="hover:text-sunda-gold transition-colors">Pengurus</a>
+                <a href="#siswa" class="hover:text-sunda-gold transition-colors">35 Siswa</a>
+                <a href="#bukutamu" class="hover:text-sunda-gold transition-colors">Buku Tamu</a>
+            </nav>
+
+            <!-- Audio Player Controls (Kacapi Suling) -->
+            <div class="flex items-center space-x-3 bg-sunda-woodMedium px-3 py-1.5 rounded-full border border-sunda-gold/60 shadow-inner">
+                <!-- Equalizer Animation -->
+                <div id="audioVisualizer" class="hidden flex items-end space-x-0.5 h-5 px-1">
+                    <span class="w-1 bg-sunda-gold rounded-full eq-bar-1"></span>
+                    <span class="w-1 bg-sunda-gold rounded-full eq-bar-2"></span>
+                    <span class="w-1 bg-sunda-gold rounded-full eq-bar-3"></span>
+                </div>
+
+                <button id="audioToggle" onclick="toggleAudio()" class="flex items-center space-x-2 bg-sunda-gold hover:bg-sunda-goldHover text-sunda-woodDark px-3 py-1 rounded-full text-xs font-bold transition duration-300 shadow">
+                    <svg id="audioIconPlay" class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <svg id="audioIconPause" class="w-3.5 h-3.5 fill-current hidden" viewBox="0 0 24 24">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                    </svg>
+                    <span id="audioText">Kacapi Suling</span>
+                </button>
+
+                <!-- Volume Slider -->
+                <input type="range" id="volumeControl" min="0" max="1" step="0.05" value="0.5" oninput="updateVolume(this.value)" class="w-14 sm:w-20 accent-sunda-gold cursor-pointer" title="Volume Suara">
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="beranda" class="relative bg-pattern text-sunda-cream py-20 lg:py-28 border-b-4 border-sunda-gold overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-t from-sunda-woodDark via-transparent to-sunda-woodDark/80"></div>
+        
+        <!-- Ornamen Sudut Sunda -->
+        <div class="absolute top-4 left-4 w-12 h-12 border-t-2 border-l-2 border-sunda-gold opacity-50"></div>
+        <div class="absolute top-4 right-4 w-12 h-12 border-t-2 border-r-2 border-sunda-gold opacity-50"></div>
+        <div class="absolute bottom-4 left-4 w-12 h-12 border-b-2 border-l-2 border-sunda-gold opacity-50"></div>
+        <div class="absolute bottom-4 right-4 w-12 h-12 border-b-2 border-r-2 border-sunda-gold opacity-50"></div>
+
+        <div class="relative max-w-5xl mx-auto px-4 text-center z-10">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sunda-emerald/80 border border-sunda-gold text-sunda-goldLight text-xs sm:text-sm font-semibold tracking-widest uppercase mb-6 shadow-md">
+                <span>🗻</span> SMPN 33 KOTA BANDUNG <span>🗻</span>
+            </div>
+            
+            <h2 class="font-sundaTitle text-4xl sm:text-6xl lg:text-7xl text-sunda-gold mb-6 drop-shadow-lg leading-tight">
+                CLASS OF 8 INTELLIGENT
+            </h2>
+            
+            <p class="text-base sm:text-xl text-sunda-cream/90 max-w-3xl mx-auto font-light leading-relaxed mb-8">
+                Sampurasun! Selamat datang di portal resmi <strong>Kelas 8I SMPN 33 Bandung</strong>. Wadah 35 murid berkarakter yang menjunjung tinggi kebersamaan, kecerdasan, dan kecintaan pada warisan budaya Pasundan.
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#siswa" class="bg-sunda-gold hover:bg-sunda-goldHover text-sunda-woodDark font-bold px-7 py-3 rounded-xl shadow-lg transition transform hover:-translate-y-0.5">
+                    Lihat 35 Siswa (A-Z)
+                </a>
+                <a href="#pengurus" class="bg-sunda-woodMedium border border-sunda-gold text-sunda-cream hover:bg-sunda-woodLight font-semibold px-7 py-3 rounded-xl transition">
+                    Struktur Pengurus
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Highlight Cerita Rakyat Sunda -->
+    <section id="folklore" class="py-14 bg-sunda-creamCard border-b border-sunda-gold/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <span class="text-sunda-terracotta text-xs font-bold tracking-widest uppercase mb-1 block">Inspirasi Budaya</span>
+                <h3 class="font-sundaTitle text-3xl sm:text-4xl text-sunda-woodDark">Tokoh Legenda & Cerita Sunda</h3>
+                <p class="text-xs sm:text-sm text-sunda-woodLight mt-1">Setiap siswa mewakili salah satu tokoh legenda Pasundan di bawah ini</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-sunda-cream p-4 rounded-2xl border border-sunda-gold/40 text-center shadow-sm hover:border-sunda-gold transition">
+                    <div class="w-12 h-12 mx-auto mb-2 text-sunda-gold">
+                        <svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="45" fill="#1B4D3E"/><path d="M20 75 Q 50 30 80 75 Z" fill="#D4AF37"/><circle cx="50" cy="30" r="10" fill="#FAF6EE"/></svg>
+                    </div>
+                    <h4 class="font-bold text-sunda-woodDark text-sm">Sangkuriang</h4>
+                    <p class="text-[11px] text-sunda-woodLight mt-0.5">Tangkuban Perahu</p>
+                </div>
+                <div class="bg-sunda-cream p-4 rounded-2xl border border-sunda-gold/40 text-center shadow-sm hover:border-sunda-gold transition">
+                    <div class="w-12 h-12 mx-auto mb-2 text-sunda-gold">
+                        <svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="45" fill="#362214"/><path d="M 30 65 C 30 40 70 40 70 65 C 60 80 40 80 30 65 Z" fill="#D4AF37"/><circle cx="50" cy="35" r="12" fill="#FAF6EE"/></svg>
+                    </div>
+                    <h4 class="font-bold text-sunda-woodDark text-sm">Lutung Kasarung</h4>
+                    <p class="text-[11px] text-sunda-woodLight mt-0.5">Guruminda & Purbasari</p>
+                </div>
+                <div class="bg-sunda-cream p-4 rounded-2xl border border-sunda-gold/40 text-center shadow-sm hover:border-sunda-gold transition">
+                    <div class="w-12 h-12 mx-auto mb-2 text-sunda-gold">
+                        <svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="45" fill="#9E381A"/><path d="M 25 35 L 50 20 L 75 35 L 65 45 L 35 45 Z" fill="#D4AF37"/><circle cx="50" cy="60" r="15" fill="#FAF6EE"/></svg>
+                    </div>
+                    <h4 class="font-bold text-sunda-woodDark text-sm">Prabu Siliwangi</h4>
+                    <p class="text-[11px] text-sunda-woodLight mt-0.5">Raja Pajajaran</p>
+                </div>
+                <div class="bg-sunda-cream p-4 rounded-2xl border border-sunda-gold/40 text-center shadow-sm hover:border-sunda-gold transition">
+                    <div class="w-12 h-12 mx-auto mb-2 text-sunda-gold">
+                        <svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="45" fill="#1B4D3E"/><path d="M 35 70 Q 50 20 65 70 Z" fill="#D4AF37"/><circle cx="50" cy="40" r="8" fill="#D4AF37"/></svg>
+                    </div>
+                    <h4 class="font-bold text-sunda-woodDark text-sm">Ciung Wanara</h4>
+                    <p class="text-[11px] text-sunda-woodLight mt-0.5">Kisah Kerajaan Galuh</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Wali Kelas -->
+    <section id="walikelas" class="py-16 bg-sunda-cream">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-gradient-to-br from-sunda-woodMedium to-sunda-woodDark text-sunda-cream rounded-3xl p-8 sm:p-12 gold-border-glow relative overflow-hidden shadow-2xl">
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <!-- Icon Visual Wali Kelas -->
+                    <div class="w-36 h-36 sm:w-44 sm:h-44 rounded-full bg-sunda-emerald border-4 border-sunda-gold flex-shrink-0 flex items-center justify-center shadow-2xl relative">
+                        <svg viewBox="0 0 100 100" class="w-28 h-28">
+                            <!-- Mahkota Ibu Guru -->
+                            <path d="M 30 30 L 50 15 L 70 30 L 60 40 L 40 40 Z" fill="#D4AF37"/>
+                            <!-- Face -->
+                            <circle cx="50" cy="48" r="18" fill="#F3E5AB"/>
+                            <!-- Sanggul / Hair -->
+                            <path d="M 28 45 C 28 30 72 30 72 45 C 72 55 28 55 28 45 Z" fill="#1C120B"/>
+                            <!-- Kebaya / Outfit -->
+                            <path d="M 25 85 C 25 65 75 65 75 85 Z" fill="#9E381A" stroke="#D4AF37" stroke-width="2"/>
+                        </svg>
+                    </div>
+
+                    <div class="text-center md:text-left">
+                        <span class="inline-block px-3 py-1 bg-sunda-gold text-sunda-woodDark font-bold text-xs rounded-full uppercase tracking-wider mb-2">
+                            Wali Kelas 8I
+                        </span>
+                        <h3 class="font-sundaTitle text-3xl sm:text-4xl text-sunda-gold mb-2">
+                            Ibu Eli Cucu Yulie E., S.Pd.
+                        </h3>
+                        <p class="text-xs sm:text-sm text-sunda-goldLight font-medium mb-4">
+                            Guru Pembimbing Class of 8 Intelligent • SMPN 33 Kota Bandung
+                        </p>
+                        
+                        <blockquote class="bg-sunda-woodDark/60 p-4 rounded-xl border-l-4 border-sunda-gold italic text-xs sm:text-sm text-sunda-cream/90 leading-relaxed">
+                            "Silih asah, silih asih, jeung silih asuh. Semoga anak-anakku di Kelas 8I senantiasa berprestasi, menjaga kekompakan, dan bangga akan identitas serta kebudayaan Sunda."
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Pengurus Kelas -->
+    <section id="pengurus" class="py-16 bg-sunda-woodDark text-sunda-cream border-t border-b border-sunda-gold/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <span class="text-sunda-gold text-xs font-bold tracking-widest uppercase mb-1 block">Kepemimpinan Kelas 8I</span>
+                <h3 class="font-sundaTitle text-3xl sm:text-5xl text-sunda-gold mb-3">Struktur Pengurus Kelas</h3>
+                <p class="text-xs sm:text-sm text-sunda-goldLight">Amanah & Dedikasi Untuk Kemajuan Class of 8 Intelligent</p>
+            </div>
+
+            <!-- 6 Pengurus Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- KM -->
+                <div class="bg-sunda-woodMedium border-2 border-sunda-gold rounded-2xl p-6 text-center transform hover:-translate-y-1 transition duration-300 shadow-xl">
+                    <div class="w-20 h-20 mx-auto rounded-full bg-sunda-emerald flex items-center justify-center text-sunda-gold font-bold text-3xl mb-4 border-2 border-sunda-gold">
+                        👑
+                    </div>
+                    <span class="text-xs font-bold text-sunda-gold uppercase tracking-widest block mb-1">Ketua Kelas (KM)</span>
+                    <h4 class="font-bold text-xl text-sunda-cream">Raisan</h4>
+                    <p class="text-xs text-sunda-goldLight mt-2 italic">Karater: Prabu Siliwangi</p>
+                </div>
+
+                <!-- Wakil KM -->
+                <div class="bg-sunda-woodMedium border border-sunda-gold/60 rounded-2xl p-6 text-center transform hover:-translate-y-1 transition duration-300 shadow-lg">
+                    <div class="w-20 h-20 mx-auto rounded-full bg-sunda-emerald flex items-center justify-center text-sunda-gold font-bold text-3xl mb-4 border border-sunda-gold/60">
+                        ⭐
+                    </div>
+                    <span class="text-xs font-bold text-sunda-gold uppercase tracking-widest block mb-1">Wakil Ketua Kelas</span>
+                    <h4 class="font-bold text-xl text-sunda-cream">Nizam</h4>
+                    <p class="text-xs text-sunda-goldLight mt-2 italic">Karakter: Ciung Wanara</p>
+                </div>
+
+                <!-- Sekretaris 1 -->
+                <div class="bg-sunda-woodMedium border border-sunda-gold/60 rounded-2xl p-6 text-center transform hover:-translate-y-1 transition duration-300 shadow-lg">
+                    <div class="w-20 h-20 mx-auto rounded-full bg-sunda-woodLight flex items-center justify-center text-sunda-gold font-bold text-3xl mb-4 border border-sunda-gold/60">
+                        📝
+                    </div>
+                    <span class="text-xs font-bold text-sunda-gold uppercase tracking-widest block mb-1">Sekretaris 1</span>
+                    <h4 class="font-bold text-xl text-sunda-cream">Nazhira</h4>
+                    <p class="text-xs text-sunda-goldLight mt-2 italic">Karakter: Dayang Sumbi</p>
+                </div>
+
+                <!-- Sekretaris 2 -->
+                <div class="bg-sunda-woodMedium border border-sunda-gold/60 rounded-2xl p-6 text-center transform hover:-translate-y-1 transition duration-300 shadow-lg">
+                    <div class="w-20 h-20 mx-auto rounded-full bg-sunda-woodLight flex items-center justify-center text-sunda-gold font-bold text-3xl mb-4 border border-sunda-gold/60">
+                        ✍️
+                    </div>
+                    <span class="text-xs font-bold text-sunda-gold uppercase tracking-widest block mb-1">Sekretaris 2</span>
+                    <h4 class="font-bold text-xl text-sunda-cream">Irfan</h4>
+                    <p class="text-xs text-sunda-goldLight mt-2 italic">Karakter: Mundinglaya Dikusumah</p>
+                </div>
+
+                <!-- Bendahara 1 -->
+                <div class="bg-sunda-woodMedium border border-sunda-gold/60 rounded-2xl p-6 text-center transform hover:-translate-y-1 transition duration-300 shadow-lg">
+                    <div class="w-20 h-20 mx-auto rounded-full bg-sunda-woodLight flex items-center justify-center text-sunda-gold font-bold text-3xl mb-4 border border-sunda-gold/60">
+                        💰
+                    </div>
+                    <span class="text-xs font-bold text-sunda-gold uppercase tracking-widest block mb-1">Bendahara 1</span>
+                    <h4 class="font-bold text-xl text-sunda-cream">Ariendra</h4>
+                    <p class="text-xs text-sunda-goldLight mt-2 italic">Karakter: Sangkuriang</p>
+                </div>
+
+                <!-- Bendahara 2 -->
+                <div class="bg-sunda-woodMedium border border-sunda-gold/60 rounded-2xl p-6 text-center transform hover:-translate-y-1 transition duration-300 shadow-lg">
+                    <div class="w-20 h-20 mx-auto rounded-full bg-sunda-woodLight flex items-center justify-center text-sunda-gold font-bold text-3xl mb-4 border border-sunda-gold/60">
+                        🪙
+                    </div>
+                    <span class="text-xs font-bold text-sunda-gold uppercase tracking-widest block mb-1">Bendahara 2</span>
+                    <h4 class="font-bold text-xl text-sunda-cream">Ardea</h4>
+                    <p class="text-xs text-sunda-goldLight mt-2 italic">Karakter: Nyi Putri Purbasari</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 35 Siswa (Strictly A-Z) -->
+    <section id="siswa" class="py-16 bg-sunda-cream">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div>
+                    <span class="text-sunda-terracotta text-xs font-bold tracking-widest uppercase block mb-1">Anggota Kelas</span>
+                    <h3 class="font-sundaTitle text-3xl sm:text-5xl text-sunda-woodDark">35 Siswa Class of 8I</h3>
+                    <p class="text-xs sm:text-sm text-sunda-woodLight mt-1">Diurutkan berdasarkan Abjad (A - Z). Klik kartu untuk membaca cerita karakter folklore.</p>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative w-full md:w-72">
+                    <input type="text" id="searchInput" onkeyup="searchStudent()" placeholder="Cari nama murid..." class="w-full bg-white border-2 border-sunda-gold/60 rounded-xl px-4 py-2.5 text-sm text-sunda-woodDark focus:outline-none focus:ring-2 focus:ring-sunda-gold shadow-sm">
+                    <svg class="w-5 h-5 text-sunda-gold absolute right-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div id="studentCounter" class="text-xs font-bold text-sunda-woodLight mb-6">
+                Menampilkan 35 dari 35 siswa
+            </div>
+
+            <!-- Grid 35 Student Cards -->
+            <div id="studentsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Populated dynamically via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Guestbook / Buku Tamu -->
+    <section id="bukutamu" class="py-16 bg-sunda-creamCard border-t border-sunda-gold/30">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-10">
+                <span class="text-sunda-terracotta text-xs font-bold tracking-widest uppercase block mb-1">Papan Pesan</span>
+                <h3 class="font-sundaTitle text-3xl sm:text-4xl text-sunda-woodDark">Buku Tamu Class of 8I</h3>
+                <p class="text-xs sm:text-sm text-sunda-woodLight mt-1">Tinggalkan salam atau pesan kesan untuk siswa-siswi Kelas 8I SMPN 33 Bandung</p>
+            </div>
+
+            <form id="guestForm" onsubmit="submitGuestbook(event)" class="bg-white p-6 sm:p-8 rounded-2xl border border-sunda-gold/40 shadow-lg mb-8">
+                <div class="grid sm:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-bold text-sunda-woodDark mb-1">Nama Anda</label>
+                        <input type="text" id="gName" required placeholder="Contoh: Ahmad / Alumni" class="w-full bg-sunda-cream border border-sunda-gold/40 rounded-xl px-4 py-2 text-xs sm:text-sm text-sunda-woodDark focus:outline-none focus:ring-2 focus:ring-sunda-gold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-sunda-woodDark mb-1">Status / Peran</label>
+                        <input type="text" id="gRole" placeholder="Contoh: Orang Tua / Teman" class="w-full bg-sunda-cream border border-sunda-gold/40 rounded-xl px-4 py-2 text-xs sm:text-sm text-sunda-woodDark focus:outline-none focus:ring-2 focus:ring-sunda-gold">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-sunda-woodDark mb-1">Pesan atau Kesan</label>
+                    <textarea id="gMsg" required rows="3" placeholder="Tuliskan pesan terbaikmu untuk Kelas 8I..." class="w-full bg-sunda-cream border border-sunda-gold/40 rounded-xl px-4 py-2 text-xs sm:text-sm text-sunda-woodDark focus:outline-none focus:ring-2 focus:ring-sunda-gold"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-sunda-woodDark hover:bg-sunda-woodMedium text-sunda-gold font-bold py-3 rounded-xl transition duration-300 border border-sunda-gold">
+                    Kirim Pesan Buku Tamu
+                </button>
+            </form>
+
+            <div id="guestFeed" class="space-y-3">
+                <div class="bg-white p-4 rounded-xl border border-sunda-gold/30 shadow-sm">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-bold text-sm text-sunda-woodDark">SMPN 33 Bandung Official</span>
+                        <span class="text-[10px] bg-sunda-gold text-sunda-woodDark font-bold px-2 py-0.5 rounded-full">Administrator</span>
+                    </div>
+                    <p class="text-xs text-sunda-woodLight italic">"Wilujeng sumping di website resmi Class of 8 Intelligent! Tetap semangat belajar dan melestarikan budaya."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-sunda-woodDark text-sunda-cream py-10 border-t-2 border-sunda-gold">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="font-heading text-lg font-bold text-sunda-gold mb-2">CLASS OF 8 INTELLIGENT (8I)</div>
+            <p class="text-xs text-sunda-goldLight mb-4">SMPN 33 Kota Bandung • Tema Kesenian & Cerita Rakyat Sunda</p>
+            <p class="text-[11px] text-sunda-cream/50">© 2026 Paguyuban Kelas 8I SMPN 33 Bandung. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Folklore Story Modal -->
+    <div id="storyModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-sunda-creamCard max-w-lg w-full rounded-3xl border-2 border-sunda-gold p-6 sm:p-8 relative shadow-2xl animate-fade-in">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-sunda-woodDark hover:text-sunda-terracotta text-2xl font-bold">
+                ✕
+            </button>
+            <div id="modalContent">
+                <!-- Populated via Javascript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Data & Logic -->
+    <script>
+        // Data 35 Siswa Terurut A-Z secara Ketat
+        const students = [
+            { name: "Aldi", role: "", char: "Sangkuriang", desc: "Pemuda gagah sakti mandraguna dalam cerita rakyat Gunung Tangkuban Perahu." },
+            { name: "Ardea", role: "Bendahara 2", char: "Nyi Putri Purbasari", desc: "Putri bungsu Kerajaan Pasundan yang baik hati dan penyayang hewan dalam cerita Lutung Kasarung." },
+            { name: "Ariendra", role: "Bendahara 1", char: "Sangkuriang Sakti", desc: "Lambang tekad kuat dan keteguhan hati para pemuda Sunda." },
+            { name: "Cheria", role: "Murid 8I", char: "Dayang Sumbi", desc: "Ibu yang bijaksana dan memelihara kearifan serta kecantikan tradisi Sunda." },
+            { name: "Dafa", role: "Murid 8I", char: "Ciung Wanara", desc: "Ksatria berani penegak keadilan dari Kerajaan Galuh." },
+            { name: "Fathan", role: "Murid 8I", char: "Prabu Siliwangi", desc: "Raja agung Pajajaran pembawa kedamaian dan kemakmuran." },
+            { name: "Fia", role: "Murid 8I", char: "Nyi Roro Kidul", desc: "Penguasa Samudra Selatan yang megah dan penuh kewibawaan." },
+            { name: "Haical", role: "Murid 8I", char: "Mundinglaya Dikusumah", desc: "Pahlawan Pasundan pencari Salaka Domas untuk kejayaan negeri." },
+            { name: "Hanifah", role: "Murid 8I", char: "Dewi Subang Larang", desc: "Tokoh perempuan berpendidikan dan berbudi pekerti luhur." },
+            { name: "Hms", role: "Murid 8I", char: "Guruminda", desc: "Pangeran dari Kahyangan yang turun ke bumi sebagai Lutung Kasarung." },
+            { name: "Indy", role: "Murid 8I", char: "Putri Purbararang", desc: "Karakter tegas yang mengajarkan pentingnya kesabaran dan kebaikan hati." },
+            { name: "Irfan", role: "Sekretaris 2", char: "Mundinglaya", desc: "Sekretaris handal dengan kecerdasan strategi Mundinglaya Dikusumah." },
+            { name: "Jamal", role: "Murid 8I", char: "Aki Lengser", desc: "Tokoh bijak penyampai nasihat dan pengawal setia kerajaan Sunda." },
+            { name: "Keysa", role: "Murid 8I", char: "Dewi Citraresmi", desc: "Putri Pasundan yang anggun dan berjiwa patriotik." },
+            { name: "Lathifa", role: "Murid 8I", char: "Nyi Pohaci Sanghyang Asri", desc: "Dewi kesuburan dan dewi padi simbol kemakmuran tanah Pasundan." },
+            { name: "Lulu", role: "Murid 8I", char: "Putri Candrakirana", desc: "Putri yang santun dan membawa kedamaian bagi sekelilingnya." },
+            { name: "Mosya", role: "Murid 8I", char: "Gatotkaca Sunda", desc: "Ksatria perkasa berotot kawat bertulang besi." },
+            { name: "Muflih", role: "Murid 8I", char: "Asep Sunandar (Dalang)", desc: "Simbol pelestari seni Wayang Golek khas Jawa Barat." },
+            { name: "Nazhira", role: "Sekretaris 1", char: "Dayang Sumbi", desc: "Sekretaris teliti bertutur kata halus bagai Dayang Sumbi." },
+            { name: "Nisa", role: "Murid 8I", char: "Dewi Sartika", desc: "Pahlawan perintis pendidikan wanita dari tatar Sunda." },
+            { name: "Nizam", role: "Wakil KM", char: "Ciung Wanara", desc: "Wakil ketua kelas pemberani dan adil layaknya Ciung Wanara." },
+            { name: "Rafa", role: "Murid 8I", char: "Prabu Borosngora", desc: "Raja Kerajaan Panjalu pelopor ilmu pengetahuan." },
+            { name: "Raisan", role: "Ketua Kelas (KM)", char: "Prabu Siliwangi", desc: "Ketua kelas berkharisma mengayomi seluruh murid Class of 8I." },
+            { name: "Raka", role: "Murid 8I", char: "Baduga Maharaja", desc: "Pemimpin bijaksana pembawa keharmonisan." },
+            { name: "Rehan", role: "Murid 8I", char: "Kian Santang", desc: "Pangeran sakti mandraguna penjelajah nusantara." },
+            { name: "Rexy", role: "Murid 8I", char: "Hanoman Sunda", desc: "Simbol kesetiaan, keberanian, dan ketangkasan." },
+            { name: "Rifki", role: "Murid 8I", char: "Semar Badranaya", desc: "Pengasuh para ksatria yang penuh kearifan lokal." },
+            { name: "Rizki", role: "Murid 8I", char: "Cepot (Astrajingga)", desc: "Tokoh wayang golek yang cerdik, humoris, dan kritis." },
+            { name: "Safana", role: "Murid 8I", char: "Putri Mayang Sari", desc: "Penari anggun lambang kecantikan seni tari Sunda." },
+            { name: "Sakila", role: "Murid 8I", char: "Dewi Rengganis", desc: "Putri jelita penjaga kelestarian alam pegunungan Pasundan." },
+            { name: "Siti", role: "Murid 8I", char: "Nyi Kentring Manik", desc: "Permaisuri Prabu Siliwangi yang penuh kasih sayang." },
+            { name: "Taufar", role: "Murid 8I", char: "Pangeran Kornel", desc: "Tokoh keteguhan sikap dalam membela rakyat." },
+            { name: "Valdi", role: "Murid 8I", char: "Dawala", desc: "Sahabat kesetiaan Cepot yang bijaksana dalam humor." },
+            { name: "Yuda", role: "Murid 8I", char: "Prabu Wastukancana", desc: "Raja yang memerintah dengan filosofi kedamaian." },
+            { name: "Zahra", role: "Murid 8I", char: "Nyi Raden Sakuntala", desc: "Putri penyayang kebudayaan Sunda." }
+        ];
+
+        // Pastikan urutan A-Z
+        students.sort((a, b) => a.name.localeCompare(b.name));
+
+        // SVG Avatar Generator untuk Tokoh Sunda
+        function getSVGAvatar(charName, index) {
+            const colors = ['#1B4D3E', '#362214', '#9E381A', '#593B22', '#2C1A0E'];
+            const bgColor = colors[index % colors.length];
+            
+            return `
+            <svg viewBox="0 0 100 100" class="w-full h-full rounded-full border-2 border-sunda-gold shadow-md">
+                <circle cx="50" cy="50" r="48" fill="${bgColor}" />
+                <!-- Top Sundanese Crown/Sanggul Motif -->
+                <path d="M 30 32 L 50 18 L 70 32 L 60 42 L 40 42 Z" fill="#D4AF37"/>
+                <!-- Face -->
+                <circle cx="50" cy="52" r="18" fill="#F3E5AB"/>
+                <!-- Hair/Headpiece -->
+                <path d="M 28 48 C 28 32 72 32 72 48 C 72 58 28 58 28 48 Z" fill="#1C120B" opacity="0.85"/>
+                <!-- Traditional Outfit -->
+                <path d="M 22 88 C 22 68 78 68 78 88 Z" fill="#D4AF37" opacity="0.9"/>
+                <path d="M 35 88 L 50 70 L 65 88 Z" fill="#FAF6EE"/>
+            </svg>`;
+        }
+
+        // Render 35 Students Grid
+        function renderStudents(data) {
+            const grid = document.getElementById("studentsGrid");
+            const counter = document.getElementById("studentCounter");
+            grid.innerHTML = "";
+
+            counter.innerText = `Menampilkan ${data.length} dari 35 siswa`;
+
+            if (data.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center text-sunda-woodLight py-12">Murid tidak ditemukan.</div>`;
+                return;
+            }
+
+            data.forEach((s, idx) => {
+                const realIndex = students.findIndex(item => item.name === s.name);
+                const card = document.createElement("div");
+                card.className = "bg-white border border-sunda-gold/40 rounded-2xl p-5 shadow-sm hover:shadow-xl transition transform hover:-translate-y-1 cursor-pointer flex flex-col justify-between";
+                card.onclick = () => openModal(s);
+
+                const roleBadge = s.role && s.role !== "Murid 8I" 
+                    ? `<span class="bg-sunda-gold text-sunda-woodDark font-bold text-[10px] px-2 py-0.5 rounded-full border border-sunda-woodDark/20 mb-1 inline-block">${s.role}</span>`
+                    : `<span class="text-[10px] text-sunda-woodLight font-semibold mb-1 inline-block">Siswa 8I</span>`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-sunda-creamDark text-sunda-woodDark border border-sunda-gold/30">
+                                #${realIndex + 1}
+                            </span>
+                            <div class="w-10 h-10">
+                                ${getSVGAvatar(s.char, realIndex)}
+                            </div>
+                        </div>
+                        ${roleBadge}
+                        <h4 class="font-bold text-sunda-woodDark text-lg mb-0.5">${s.name}</h4>
+                        <p class="text-xs text-sunda-terracotta font-semibold">🗻 ${s.char}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-sunda-gold/20 flex justify-between items-center text-[11px] text-sunda-woodLight">
+                        <span>Class of 8I</span>
+                        <span class="text-sunda-gold font-bold">Detail Tokoh →</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Search Filter
+        function searchStudent() {
+            const q = document.getElementById("searchInput").value.toLowerCase();
+            const filtered = students.filter(s => s.name.toLowerCase().includes(q) || s.char.toLowerCase().includes(q) || s.role.toLowerCase().includes(q));
+            renderStudents(filtered);
+        }
+
+        // Modal Functions
+        function openModal(student) {
+            const modal = document.getElementById("storyModal");
+            const content = document.getElementById("modalContent");
+            const realIndex = students.findIndex(item => item.name === student.name);
+
+            content.innerHTML = `
+                <div class="text-center">
+                    <div class="w-20 h-20 mx-auto mb-3">
+                        ${getSVGAvatar(student.char, realIndex)}
+                    </div>
+                    <span class="text-xs font-bold text-sunda-gold bg-sunda-woodDark px-3 py-1 rounded-full uppercase tracking-widest inline-block mb-2">
+                        ${student.role || "Siswa Class of 8I"}
+                    </span>
+                    <h3 class="font-sundaTitle text-3xl text-sunda-woodDark mb-1">${student.name}</h3>
+                    <h4 class="text-sm font-bold text-sunda-terracotta mb-4">Tokoh Folklore: ${student.char}</h4>
+                    
+                    <div class="bg-sunda-cream p-4 rounded-xl border border-sunda-gold/40 text-left text-xs sm:text-sm text-sunda-woodDark leading-relaxed mb-6">
+                        <p class="font-bold text-sunda-woodMedium mb-1">📜 Cerita & Nilai Filosofi:</p>
+                        <p>"${student.desc}"</p>
+                    </div>
+
+                    <button onclick="closeModal()" class="bg-sunda-woodDark hover:bg-sunda-woodMedium text-sunda-gold font-bold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider border border-sunda-gold">
+                        Tutup Modal
+                    </button>
+                </div>
+            `;
+            modal.classList.remove("hidden");
+        }
+
+        function closeModal() {
+            document.getElementById("storyModal").classList.add("hidden");
+        }
+
+        // Guestbook Submit
+        function submitGuestbook(e) {
+            e.preventDefault();
+            const name = document.getElementById("gName").value;
+            const role = document.getElementById("gRole").value || "Tamu";
+            const msg = document.getElementById("gMsg").value;
+
+            const feed = document.getElementById("guestFeed");
+            const item = document.createElement("div");
+            item.className = "bg-white p-4 rounded-xl border border-sunda-gold/40 shadow-sm";
+            item.innerHTML = `
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold text-sm text-sunda-woodDark">${name}</span>
+                    <span class="text-[10px] bg-sunda-creamDark text-sunda-terracotta font-bold px-2 py-0.5 rounded-full border border-sunda-gold/30">${role}</span>
+                </div>
+                <p class="text-xs text-sunda-woodLight">"${msg}"</p>
+            `;
+            feed.prepend(item);
+            document.getElementById("guestForm").reset();
+        }
+
+        // Kacapi Suling Synthesizer Engine (Pentatonic Pelog/Degung)
+        let audioCtx = null;
+        let isAudioPlaying = false;
+        let audioTimer = null;
+        let masterGain = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                masterGain = audioCtx.createGain();
+                masterGain.gain.value = document.getElementById("volumeControl").value;
+                masterGain.connect(audioCtx.destination);
+            }
+        }
+
+        function updateVolume(val) {
+            if (masterGain) {
+                masterGain.gain.value = val;
+            }
+        }
+
+        function playKacapiSulingNote() {
+            if (!isAudioPlaying || !audioCtx) return;
+
+            // Sundanese Degung Pentatonic Frequencies (Hz): D-E-G-A-C (Pelog / Salendro hybrid)
+            const degungScale = [293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99];
+            const pitch = degungScale[Math.floor(Math.random() * degungScale.length)];
+
+            // Kacapi (Plucked String)
+            const oscKacapi = audioCtx.createOscillator();
+            const gainKacapi = audioCtx.createGain();
+            oscKacapi.type = 'triangle';
+            oscKacapi.frequency.setValueAtTime(pitch, audioCtx.currentTime);
+
+            gainKacapi.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gainKacapi.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.4);
+
+            oscKacapi.connect(gainKacapi);
+            gainKacapi.connect(masterGain);
+
+            oscKacapi.start();
+            oscKacapi.stop(audioCtx.currentTime + 1.4);
+
+            // Suling (Bamboo Flute Vibrato) occasionally
+            if (Math.random() > 0.4) {
+                const oscSuling = audioCtx.createOscillator();
+                const gainSuling = audioCtx.createGain();
+                oscSuling.type = 'sine';
+                
+                const sulingPitch = pitch * 2; // Octave higher
+                oscSuling.frequency.setValueAtTime(sulingPitch, audioCtx.currentTime);
+                // Vibrato effect
+                oscSuling.frequency.linearRampToValueAtTime(sulingPitch + 4, audioCtx.currentTime + 0.3);
+                oscSuling.frequency.linearRampToValueAtTime(sulingPitch, audioCtx.currentTime + 0.6);
+
+                gainSuling.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gainSuling.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.2);
+                gainSuling.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.8);
+
+                oscSuling.connect(gainSuling);
+                gainSuling.connect(masterGain);
+
+                oscSuling.start();
+                oscSuling.stop(audioCtx.currentTime + 1.8);
+            }
+        }
+
+        function toggleAudio() {
+            initAudio();
+            const playIcon = document.getElementById("audioIconPlay");
+            const pauseIcon = document.getElementById("audioIconPause");
+            const text = document.getElementById("audioText");
+            const visualizer = document.getElementById("audioVisualizer");
+
+            if (!isAudioPlaying) {
+                audioCtx.resume();
+                isAudioPlaying = true;
+                playIcon.classList.add("hidden");
+                pauseIcon.classList.remove("hidden");
+                visualizer.classList.remove("hidden");
+                text.innerText = "Matikan Musik";
+
+                audioTimer = setInterval(playKacapiSulingNote, 400);
+            } else {
+                isAudioPlaying = false;
+                clearInterval(audioTimer);
+                playIcon.classList.remove("hidden");
+                pauseIcon.classList.add("hidden");
+                visualizer.classList.add("hidden");
+                text.innerText = "Kacapi Suling";
+            }
+        }
+
+        // Initialize Page
+        window.onload = function() {
+            renderStudents(students);
+        };
+    </script>
+</body>
+</html>
